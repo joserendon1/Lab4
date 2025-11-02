@@ -278,3 +278,17 @@ std::vector<std::string> Red::obtenerNombresEnrutadores() const {
 std::vector<Conexion*> Red::obtenerConexiones() const {
     return conexiones;
 }
+
+void Red::actualizarCostoConexion(const std::string& origen, const std::string& destino, int nuevoCosto) {
+    eliminarConexion(origen, destino);
+    agregarConexion(origen, destino, nuevoCosto);
+}
+
+void Red::mostrarTopologia() const {
+    std::cout << "\n=== TOPOLOGIA DE LA RED ===" << std::endl;
+    std::cout << "Conexiones:" << std::endl;
+    for(const auto& conexion : conexiones) {
+        std::cout << conexion->obtenerOrigen() << " --(" << conexion->obtenerCosto()
+        << ")--> " << conexion->obtenerDestino() << std::endl;
+    }
+}

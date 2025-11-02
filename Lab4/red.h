@@ -37,6 +37,9 @@ public:
     std::vector<std::string> obtenerNombresEnrutadores() const;
     std::vector<Conexion*> obtenerConexiones() const;
 
+    void actualizarCostoConexion(const std::string& origen, const std::string& destino, int nuevoCosto);
+    void mostrarTopologia() const;
+
     void limpiarRed();
 };
 

@@ -1,11 +1,14 @@
 #include <iostream>
 #include "red.h"
+#include "menu.h"
 
 using namespace std;
 
 int main() {
     Red red("MiRed");
+    Menu menu(&red);
 
+    cout << "=== CONFIGURACION INICIAL ===" << endl;
     red.agregarEnrutador("A");
     red.agregarEnrutador("B");
     red.agregarEnrutador("C");
@@ -18,17 +21,10 @@ int main() {
     red.agregarConexion("B", "D", 1);
     red.agregarConexion("C", "D", 2);
 
-    cout << "=== RED EJEMPLO ===" << endl;
-
     red.encontrarYMostrarCamino("A", "C");
     red.imprimirTablaEnrutador("A");
 
-    cout << "\n=== RED ALEATORIA ===" << endl;
-
-    Red redAleatoria("RedAleatoria");
-    redAleatoria.generarRedAleatoria(6, 0.5, 15);
-    redAleatoria.encontrarYMostrarCamino("E0", "E3");
-    redAleatoria.imprimirTablaEnrutador("E0");
+    menu.mostrarMenuPrincipal();
 
     return 0;
 }
