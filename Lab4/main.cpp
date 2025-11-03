@@ -2,13 +2,13 @@
 #include "red.h"
 #include "menu.h"
 
-using namespace std;
+
 
 int main() {
     Red red("MiRed");
     Menu menu(&red);
 
-    cout << "=== CONFIGURACION INICIAL ===" << endl;
+    std::cout << "=== CONFIGURACION INICIAL ===" << std::endl;
     red.agregarEnrutador("A");
     red.agregarEnrutador("B");
     red.agregarEnrutador("C");

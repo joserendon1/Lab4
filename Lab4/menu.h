@@ -16,6 +16,11 @@ public:
     void mostrarInformacion();
     void cargarRedDesdeArchivo();
     void generarRedAleatoria();
+
+    void eliminarConexion();
+    void actualizarCostoConexion();
+    void mostrarTopologia();
+
 };
 
 #endif
