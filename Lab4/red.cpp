@@ -58,17 +58,45 @@ bool Red::existeEnrutador(const std::string& nombre) const {
 }
 
 void Red::agregarConexion(const std::string& origen, const std::string& destino, int costo) {
-    if (existeEnrutador(origen) && existeEnrutador(destino)) {
-        conexiones.push_back(new Conexion(origen, destino, costo));
-        conexiones.push_back(new Conexion(destino, origen, costo));
-        enrutadores[origen]->agregarVecino(destino, costo);
-        enrutadores[destino]->agregarVecino(origen, costo);
-
-        ejecutarAlgoritmoRutas();
+    if (origen == destino) {
+        std::cout << "Error: No se puede crear conexion de un enrutador a si mismo (" << origen << " -> " << destino << ")" << std::endl;
+        return;
     }
+
+    if (costo <= 0) {
+        std::cout << "Error: El costo debe ser un numero positivo (se recibio: " << costo << ")" << std::endl;
+        return;
+    }
+
+    if (!existeEnrutador(origen)) {
+        std::cout << "Error: El enrutador origen '" << origen << "' no existe" << std::endl;
+        return;
+    }
+
+    if (!existeEnrutador(destino)) {
+        std::cout << "Error: El enrutador destino '" << destino << "' no existe" << std::endl;
+        return;
+    }
+
+    for (auto conexion : conexiones) {
+        if (conexion->obtenerOrigen() == origen && conexion->obtenerDestino() == destino) {
+            std::cout << "Error: La conexion " << origen << " -> " << destino << " ya existe. Use 'Actualizar Costo' para modificarla." << std::endl;
+            return;
+        }
+    }
+
+    conexiones.push_back(new Conexion(origen, destino, costo));
+    conexiones.push_back(new Conexion(destino, origen, costo));
+    enrutadores[origen]->agregarVecino(destino, costo);
+    enrutadores[destino]->agregarVecino(origen, costo);
+
+    ejecutarAlgoritmoRutas();
+    std::cout << "Conexion agregada exitosamente: " << origen << " <-> " << destino << " (costo: " << costo << ")" << std::endl;
 }
 
 void Red::eliminarConexion(const std::string& origen, const std::string& destino) {
+    bool conexionEncontrada = false;
+
     auto it = conexiones.begin();
     while (it != conexiones.end()) {
         Conexion* conexion = *it;
@@ -76,6 +104,7 @@ void Red::eliminarConexion(const std::string& origen, const std::string& destino
             (conexion->obtenerOrigen() == destino && conexion->obtenerDestino() == origen)) {
             delete conexion;
             it = conexiones.erase(it);
+            conexionEncontrada = true;
         } else {
             ++it;
         }
@@ -88,7 +117,12 @@ void Red::eliminarConexion(const std::string& origen, const std::string& destino
         enrutadores[destino]->eliminarVecino(origen);
     }
 
-    ejecutarAlgoritmoRutas();
+    if (conexionEncontrada) {
+        ejecutarAlgoritmoRutas();
+        std::cout << "Conexion eliminada: " << origen << " <-> " << destino << std::endl;
+    } else {
+        std::cout << "Error: No existe conexion entre " << origen << " y " << destino << std::endl;
+    }
 }
 
 void Red::dijkstra(const std::string& origen) {
@@ -280,8 +314,38 @@ std::vector<Conexion*> Red::obtenerConexiones() const {
 }
 
 void Red::actualizarCostoConexion(const std::string& origen, const std::string& destino, int nuevoCosto) {
+    if (origen == destino) {
+        std::cout << "Error: No se puede actualizar conexion de un enrutador a si mismo" << std::endl;
+        return;
+    }
+
+    if (nuevoCosto <= 0) {
+        std::cout << "Error: El costo debe ser un numero positivo" << std::endl;
+        return;
+    }
+
+    if (!existeEnrutador(origen) || !existeEnrutador(destino)) {
+        std::cout << "Error: Uno o ambos enrutadores no existen" << std::endl;
+        return;
+    }
+
+    bool conexionExiste = false;
+    for (auto conexion : conexiones) {
+        if ((conexion->obtenerOrigen() == origen && conexion->obtenerDestino() == destino) ||
+            (conexion->obtenerOrigen() == destino && conexion->obtenerDestino() == origen)) {
+            conexionExiste = true;
+            break;
+        }
+    }
+
+    if (!conexionExiste) {
+        std::cout << "Error: No existe conexion entre " << origen << " y " << destino << ". Agreguela primero." << std::endl;
+        return;
+    }
+
     eliminarConexion(origen, destino);
     agregarConexion(origen, destino, nuevoCosto);
+    std::cout << "Costo actualizado: " << origen << " <-> " << destino << " = " << nuevoCosto << std::endl;
 }
 
 void Red::mostrarTopologia() const {

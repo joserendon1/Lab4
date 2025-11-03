@@ -148,7 +148,6 @@ void Menu::gestionarConexiones() {
     cout << "Costo: "; cin >> costo;
 
     red->agregarConexion(origen, destino, costo);
-    cout << "Conexion agregada." << endl;
 }
 
 void Menu::mostrarInformacion() {
