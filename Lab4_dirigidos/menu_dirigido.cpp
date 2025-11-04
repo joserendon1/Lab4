@@ -81,7 +81,7 @@ void MenuDirigido::mostrarMenuPrincipal() {
             std::cout << "Saliendo del sistema..." << std::endl;
             break;
         default:
-            std::cout << "Error: Opcion invalida! Por favor seleccione 0-7." << std::endl;
+            std::cout << "Error: Opcion invalida! Por favor seleccione 0-11." << std::endl;
             std::cin.clear();
         }
     } while(opcion != 0);
