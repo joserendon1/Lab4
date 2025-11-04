@@ -1,32 +1,31 @@
 #include "menu.h"
 #include <iostream>
 
-using namespace std;
 
 Menu::Menu(Red* red) : red(red) {}
 
 void Menu::mostrarMenuPrincipal() {
     int opcion;
-    string entrada;
+    std::string entrada;
 
     do {
-        cout << "\n=========================================" << endl;
-        cout << "      SISTEMA DE SIMULACION DE RED" << endl;
-        cout << "=========================================" << endl;
-        cout << "1. Gestionar Enrutadores" << endl;
-        cout << "2. Agregar Conexion" << endl;
-        cout << "3. Eliminar Conexion" << endl;
-        cout << "4. Actualizar Costo de Conexion" << endl;
-        cout << "5. Mostrar Tablas de Enrutamiento" << endl;
-        cout << "6. Mostrar Topologia Completa" << endl;
-        cout << "7. Cargar Red desde Archivo" << endl;
-        cout << "8. Generar Red Aleatoria" << endl;
-        cout << "9. Encontrar Camino Mas Corto" << endl;
-        cout << "0. Salir" << endl;
-        cout << "-----------------------------------------" << endl;
-        cout << "Seleccione una opcion: ";
+        std::cout << "\n=========================================" << std::endl;
+        std::cout << "      SISTEMA DE SIMULACION DE RED" << std::endl;
+        std::cout << "=========================================" << std::endl;
+        std::cout << "1. Gestionar Enrutadores" << std::endl;
+        std::cout << "2. Agregar Conexion" << std::endl;
+        std::cout << "3. Eliminar Conexion" << std::endl;
+        std::cout << "4. Actualizar Costo de Conexion" << std::endl;
+        std::cout << "5. Mostrar Tablas de Enrutamiento" << std::endl;
+        std::cout << "6. Mostrar Topologia Completa" << std::endl;
+        std::cout << "7. Cargar Red desde Archivo" << std::endl;
+        std::cout << "8. Generar Red Aleatoria" << std::endl;
+        std::cout << "9. Encontrar Camino Mas Corto" << std::endl;
+        std::cout << "0. Salir" << std::endl;
+        std::cout << "-----------------------------------------" << std::endl;
+        std::cout << "Seleccione una opcion: ";
 
-        cin >> entrada;
+        std::cin >> entrada;
 
         bool esNumero = true;
         for (char c : entrada) {
@@ -68,84 +67,83 @@ void Menu::mostrarMenuPrincipal() {
             generarRedAleatoria();
             break;
         case 9: {
-            string origen, destino;
-            cout << "\n=== ENCONTRAR CAMINO MAS CORTO ===" << endl;
-            cout << "Origen: ";
-            cin >> origen;
-            cout << "Destino: ";
-            cin >> destino;
+            std::string origen, destino;
+            std::cout << "\n=== ENCONTRAR CAMINO MAS CORTO ===" << std::endl;
+            std::cout << "Origen: ";
+            std::cin >> origen;
+            std::cout << "Destino: ";
+            std::cin >> destino;
             red->encontrarYMostrarCamino(origen, destino);
             break;
         }
         case 0:
-            cout << "Saliendo del sistema..." << endl;
+            std::cout << "Saliendo del sistema..." << std::endl;
             break;
         default:
-            cout << "Error: Opcion invalida! Por favor seleccione un numero entre 0 y 9." << endl;
-            // Limpiar el estado de error de cin si es necesario
-            cin.clear();
+            std::cout << "Error: Opcion invalida! Por favor seleccione un numero entre 0 y 9." << std::endl;
+            std::cin.clear();
         }
     } while(opcion != 0);
 }
 
 void Menu::gestionarEnrutadores() {
     int opcion;
-    string nombre;
+    std::string nombre;
 
-    cout << "\n=== GESTION DE ENRUTADORES ===" << endl;
-    cout << "1. Agregar Enrutador" << endl;
-    cout << "2. Eliminar Enrutador" << endl;
-    cout << "3. Listar Enrutadores Existentes" << endl;
-    cout << "Seleccione una opcion: ";
-    cin >> opcion;
+    std::cout << "\n=== GESTION DE ENRUTADORES ===" << std::endl;
+    std::cout << "1. Agregar Enrutador" << std::endl;
+    std::cout << "2. Eliminar Enrutador" << std::endl;
+    std::cout << "3. Listar Enrutadores Existentes" << std::endl;
+    std::cout << "Seleccione una opcion: ";
+    std::cin >> opcion;
 
     if (opcion == 1 || opcion == 2) {
-        cout << "Nombre del enrutador: ";
-        cin >> nombre;
+        std::cout << "Nombre del enrutador: ";
+        std::cin >> nombre;
     }
 
     switch(opcion) {
     case 1:
         if (red->existeEnrutador(nombre)) {
-            cout << "Error: El enrutador '" << nombre << "' ya existe en la red." << endl;
+            std::cout << "Error: El enrutador '" << nombre << "' ya existe en la red." << std::endl;
         } else {
             red->agregarEnrutador(nombre);
-            cout << "Enrutador '" << nombre << "' agregado exitosamente." << endl;
+            std::cout << "Enrutador '" << nombre << "' agregado exitosamente." << std::endl;
         }
         break;
     case 2:
         if (!red->existeEnrutador(nombre)) {
-            cout << "Error: El enrutador '" << nombre << "' no existe en la red." << endl;
+            std::cout << "Error: El enrutador '" << nombre << "' no existe en la red." << std::endl;
         } else {
             red->eliminarEnrutador(nombre);
-            cout << "Enrutador '" << nombre << "' eliminado exitosamente." << endl;
+            std::cout << "Enrutador '" << nombre << "' eliminado exitosamente." << std::endl;
         }
         break;
     case 3:
     {
         auto enrutadores = red->obtenerNombresEnrutadores();
-        cout << "\nEnrutadores en la red (" << enrutadores.size() << "):" << endl;
+        std::cout << "\nEnrutadores en la red (" << enrutadores.size() << "):" << std::endl;
         if (enrutadores.empty()) {
-            cout << "No hay enrutadores en la red." << endl;
+            std::cout << "No hay enrutadores en la red." << std::endl;
         } else {
             for(const auto& nom : enrutadores) {
-                cout << "- " << nom << endl;
+                std::cout << "- " << nom << std::endl;
             }
         }
     }
     break;
     default:
-        cout << "Error: Opcion invalida!" << endl;
+        std::cout << "Error: Opcion invalida!" << std::endl;
     }
 }
 
 void Menu::gestionarConexiones() {
-    string origen, destino;
+    std::string origen, destino;
     int costo;
 
-    cout << "Origen: "; cin >> origen;
-    cout << "Destino: "; cin >> destino;
-    cout << "Costo: "; cin >> costo;
+    std::cout << "Origen: "; std::cin >> origen;
+    std::cout << "Destino: "; std::cin >> destino;
+    std::cout << "Costo: "; std::cin >> costo;
 
     red->agregarConexion(origen, destino, costo);
 }
@@ -153,16 +151,16 @@ void Menu::gestionarConexiones() {
 void Menu::mostrarInformacion() {
     auto enrutadores = red->obtenerNombresEnrutadores();
 
-    cout << "\nEnrutadores en la red:" << endl;
+    std::cout << "\nEnrutadores en la red:" << std::endl;
     for(const auto& nombre : enrutadores) {
         red->imprimirTablaEnrutador(nombre);
     }
 }
 
 void Menu::cargarRedDesdeArchivo() {
-    string nombreArchivo;
-    cout << "Nombre del archivo: ";
-    cin >> nombreArchivo;
+    std::string nombreArchivo;
+    std::cout << "Nombre del archivo: ";
+    std::cin >> nombreArchivo;
     red->cargarDesdeArchivo(nombreArchivo);
 }
 
@@ -170,71 +168,71 @@ void Menu::generarRedAleatoria() {
     int numEnrutadores, costoMaximo;
     double probabilidad;
 
-    cout << "Numero de enrutadores: ";
-    cin >> numEnrutadores;
-    cout << "Probabilidad de conexion (0-1): ";
-    cin >> probabilidad;
-    cout << "Costo maximo: ";
-    cin >> costoMaximo;
+    std::cout << "Numero de enrutadores: ";
+    std::cin >> numEnrutadores;
+    std::cout << "Probabilidad de conexion (0-1): ";
+    std::cin >> probabilidad;
+    std::cout << "Costo maximo: ";
+    std::cin >> costoMaximo;
 
     red->generarRedAleatoria(numEnrutadores, probabilidad, costoMaximo);
 }
 
 void Menu::eliminarConexion() {
-    string origen, destino;
+    std::string origen, destino;
 
-    cout << "\n=== ELIMINAR CONEXION ===" << endl;
-    cout << "Origen: ";
-    cin >> origen;
-    cout << "Destino: ";
-    cin >> destino;
+    std::cout << "\n=== ELIMINAR CONEXION ===" << std::endl;
+    std::cout << "Origen: ";
+    std::cin >> origen;
+    std::cout << "Destino: ";
+    std::cin >> destino;
 
     if (!red->existeEnrutador(origen)) {
-        cout << "Error: El enrutador origen '" << origen << "' no existe" << endl;
+        std::cout << "Error: El enrutador origen '" << origen << "' no existe" << std::endl;
         return;
     }
 
     if (!red->existeEnrutador(destino)) {
-        cout << "Error: El enrutador destino '" << destino << "' no existe" << endl;
+        std::cout << "Error: El enrutador destino '" << destino << "' no existe" << std::endl;
         return;
     }
 
     red->eliminarConexion(origen, destino);
-    cout << "Conexion entre '" << origen << "' y '" << destino << "' eliminada." << endl;
+    std::cout << "Conexion entre '" << origen << "' y '" << destino << "' eliminada." << std::endl;
 }
 
 void Menu::actualizarCostoConexion() {
-    string origen, destino;
+    std::string origen, destino;
     int nuevoCosto;
 
-    cout << "\n=== ACTUALIZAR COSTO DE CONEXION ===" << endl;
-    cout << "Origen: ";
-    cin >> origen;
-    cout << "Destino: ";
-    cin >> destino;
-    cout << "Nuevo costo: ";
-    cin >> nuevoCosto;
+    std::cout << "\n=== ACTUALIZAR COSTO DE CONEXION ===" << std::endl;
+    std::cout << "Origen: ";
+    std::cin >> origen;
+    std::cout << "Destino: ";
+    std::cin >> destino;
+    std::cout << "Nuevo costo: ";
+    std::cin >> nuevoCosto;
 
     if (nuevoCosto <= 0) {
-        cout << "Error: El costo debe ser un numero positivo" << endl;
+        std::cout << "Error: El costo debe ser un numero positivo" << std::endl;
         return;
     }
 
     if (!red->existeEnrutador(origen)) {
-        cout << "Error: El enrutador origen '" << origen << "' no existe" << endl;
+        std::cout << "Error: El enrutador origen '" << origen << "' no existe" << std::endl;
         return;
     }
 
     if (!red->existeEnrutador(destino)) {
-        cout << "Error: El enrutador destino '" << destino << "' no existe" << endl;
+        std::cout << "Error: El enrutador destino '" << destino << "' no existe" << std::endl;
         return;
     }
 
     red->actualizarCostoConexion(origen, destino, nuevoCosto);
-    cout << "Costo de conexion entre '" << origen << "' y '" << destino << "' actualizado a " << nuevoCosto << endl;
+    std::cout << "Costo de conexion entre '" << origen << "' y '" << destino << "' actualizado a " << nuevoCosto << std::endl;
 }
 
 void Menu::mostrarTopologia() {
-    cout << "\n=== TOPOLOGIA COMPLETA DE LA RED ===" << endl;
+    std::cout << "\n=== TOPOLOGIA COMPLETA DE LA RED ===" << std::endl;
     red->mostrarTopologia();
 }
