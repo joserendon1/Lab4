@@ -39,6 +39,7 @@ public:
     std::vector<std::string> obtenerNombresEnrutadores() const;
     std::vector<ConexionDirigida*> obtenerConexiones() const;
     void mostrarTopologia() const;
+    void mostrarFormatoArchivo() const;
 };
 
 #endif

@@ -1,5 +1,8 @@
 #include "menu_dirigido.h"
 #include <iostream>
+#include <stdexcept>
+#include <limits>
+
 
 MenuDirigido::MenuDirigido(RedDirigida* red) : red(red) {}
 
@@ -21,6 +24,7 @@ void MenuDirigido::mostrarMenuPrincipal() {
         std::cout << "8. Cargar Red desde Archivo" << std::endl;
         std::cout << "9. Generar Red Aleatoria" << std::endl;
         std::cout << "10. Encontrar Camino Mas Corto" << std::endl;
+        std::cout << "11. Mostrar Formato de Archivo" << std::endl;
         std::cout << "0. Salir" << std::endl;
         std::cout << "-----------------------------------------" << std::endl;
         std::cout << "Seleccione una opcion: ";
@@ -72,6 +76,7 @@ void MenuDirigido::mostrarMenuPrincipal() {
         case 8: cargarRedDesdeArchivo(); break;
         case 9: generarRedAleatoria(); break;
         case 10: encontrarCaminoMasCorto(); break;
+        case 11: red->mostrarFormatoArchivo(); break;
         case 0:
             std::cout << "Saliendo del sistema..." << std::endl;
             break;
@@ -86,16 +91,27 @@ void MenuDirigido::gestionarEnrutadores() {
     int opcion;
     std::string nombre;
 
-    std::cout << "\n=== GESTION DE ENRUTADORES ===" << std::endl;
+    std::cout << "\n=== GESTIÓN DE ENRUTADORES ===" << std::endl;
     std::cout << "1. Agregar Enrutador" << std::endl;
     std::cout << "2. Eliminar Enrutador" << std::endl;
     std::cout << "3. Listar Enrutadores" << std::endl;
     std::cout << "Seleccione: ";
-    std::cin >> opcion;
+
+    if (!(std::cin >> opcion)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cerr << "Error: Entrada inválida" << std::endl;
+        return;
+    }
 
     if (opcion == 1 || opcion == 2) {
         std::cout << "Nombre del enrutador: ";
-        std::cin >> nombre;
+        if (!(std::cin >> nombre)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cerr << "Error: Nombre inválido" << std::endl;
+            return;
+        }
     }
 
     switch(opcion) {
@@ -109,13 +125,17 @@ void MenuDirigido::gestionarEnrutadores() {
     {
         auto enrutadores = red->obtenerNombresEnrutadores();
         std::cout << "\nEnrutadores en la red (" << enrutadores.size() << "):" << std::endl;
-        for(const auto& nom : enrutadores) {
-            std::cout << "- " << nom << std::endl;
+        if (enrutadores.empty()) {
+            std::cout << "No hay enrutadores en la red." << std::endl;
+        } else {
+            for(const auto& nom : enrutadores) {
+                std::cout << "- " << nom << std::endl;
+            }
         }
     }
     break;
     default:
-        std::cout << "Opcion invalida!" << std::endl;
+        std::cerr << "Error: Opción inválida!" << std::endl;
     }
 }
 
@@ -146,9 +166,23 @@ void MenuDirigido::mostrarTopologia() {
 
 void MenuDirigido::encontrarCaminoMasCorto() {
     std::string origen, destino;
-    std::cout << "\n=== ENCONTRAR CAMINO MAS CORTO ===" << std::endl;
-    std::cout << "Origen: "; std::cin >> origen;
-    std::cout << "Destino: "; std::cin >> destino;
+    std::cout << "\n=== ENCONTRAR CAMINO MÁS CORTO ===" << std::endl;
+    std::cout << "Origen: ";
+    if (!(std::cin >> origen)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cerr << "Error: Entrada inválida para origen" << std::endl;
+        return;
+    }
+
+    std::cout << "Destino: ";
+    if (!(std::cin >> destino)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cerr << "Error: Entrada inválida para destino" << std::endl;
+        return;
+    }
+
     red->encontrarYMostrarCamino(origen, destino);
 }
 
@@ -165,12 +199,30 @@ void MenuDirigido::generarRedAleatoria() {
     double probabilidad;
 
     std::cout << "\n=== GENERAR RED ALEATORIA ===" << std::endl;
-    std::cout << "Numero de enrutadores: ";
-    std::cin >> numEnrutadores;
-    std::cout << "Probabilidad de conexion (0-1): ";
-    std::cin >> probabilidad;
-    std::cout << "Costo maximo: ";
-    std::cin >> costoMaximo;
+
+    std::cout << "Número de enrutadores (2-100): ";
+    if (!(std::cin >> numEnrutadores) || numEnrutadores < 2 || numEnrutadores > 100) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cerr << "Error: El número de enrutadores debe estar entre 2 y 100" << std::endl;
+        return;
+    }
+
+    std::cout << "Probabilidad de conexión (0.1-1.0): ";
+    if (!(std::cin >> probabilidad) || probabilidad < 0.1 || probabilidad > 1.0) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cerr << "Error: La probabilidad debe estar entre 0.1 y 1.0" << std::endl;
+        return;
+    }
+
+    std::cout << "Costo máximo (1-1000): ";
+    if (!(std::cin >> costoMaximo) || costoMaximo < 1 || costoMaximo > 1000) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cerr << "Error: El costo máximo debe estar entre 1 y 1000" << std::endl;
+        return;
+    }
 
     red->generarRedAleatoria(numEnrutadores, probabilidad, costoMaximo);
 }
