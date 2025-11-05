@@ -26,7 +26,6 @@ public:
     bool existeEnrutador(const std::string& nombre) const;
 
     void agregarConexionDirigida(const std::string& origen, const std::string& destino, int costo);
-    void agregarConexionBidireccional(const std::string& nodo1, const std::string& nodo2, int costo1, int costo2);
     void eliminarConexion(const std::string& origen, const std::string& destino);
     void actualizarCostoConexion(const std::string& origen, const std::string& destino, int nuevoCosto);
 

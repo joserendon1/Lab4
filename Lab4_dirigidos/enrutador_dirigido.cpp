@@ -49,7 +49,7 @@ int EnrutadorDirigido::obtenerCostoHacia(const std::string& destino) const {
     if (it != tablaCostos.end()) {
         return it->second;
     }
-    return -1; // -1 indica que no hay camino
+    return -1;
 }
 
 std::vector<std::string> EnrutadorDirigido::obtenerCaminoHacia(const std::string& destino) const {

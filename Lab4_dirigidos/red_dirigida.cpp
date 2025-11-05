@@ -28,18 +28,18 @@ void RedDirigida::limpiarRed() {
 
 void RedDirigida::agregarEnrutador(const std::string& nombre) {
     if (nombre.empty()) {
-        std::cerr << "Error: El nombre del enrutador no puede estar vacío" << std::endl;
+        std::cerr << "Error: El nombre del enrutador no puede estar vacio" << std::endl;
         return;
     }
 
     if (nombre.length() > 20) {
-        std::cerr << "Error: El nombre del enrutador es demasiado largo (máx 20 caracteres)" << std::endl;
+        std::cerr << "Error: El nombre del enrutador es demasiado largo (max 20 caracteres)" << std::endl;
         return;
     }
 
     for (char c : nombre) {
         if (!std::isalnum(c) && c != '_') {
-            std::cerr << "Error: El nombre solo puede contener letras, números y _" << std::endl;
+            std::cerr << "Error: El nombre solo puede contener letras, numeros y _" << std::endl;
             return;
         }
     }
@@ -54,7 +54,7 @@ void RedDirigida::agregarEnrutador(const std::string& nombre) {
         ejecutarAlgoritmoRutas();
         std::cout << "Enrutador '" << nombre << "' agregado exitosamente." << std::endl;
     } catch (const std::bad_alloc& e) {
-        std::cerr << "Error crítico: Memoria insuficiente para crear enrutador" << std::endl;
+        std::cerr << "Error critico: Memoria insuficiente para crear enrutador" << std::endl;
     }
 }
 
@@ -65,7 +65,7 @@ void RedDirigida::eliminarEnrutador(const std::string& nombre) {
     }
 
     if (enrutadores.size() <= 1) {
-        std::cerr << "Error: No se puede eliminar el único enrutador de la red" << std::endl;
+        std::cerr << "Error: No se puede eliminar el unico enrutador de la red" << std::endl;
         return;
     }
 
@@ -102,17 +102,22 @@ bool RedDirigida::existeEnrutador(const std::string& nombre) const {
 
 void RedDirigida::agregarConexionDirigida(const std::string& origen, const std::string& destino, int costo) {
     if (origen == destino) {
-        std::cerr << "Error: No se puede crear conexión de un enrutador consigo mismo" << std::endl;
+        std::cerr << "Error: No se puede crear conexion de un enrutador consigo mismo" << std::endl;
         return;
     }
 
     if (costo <= 0) {
-        std::cerr << "Error: El costo debe ser un número positivo mayor que cero" << std::endl;
+        std::cerr << "Error: El costo debe ser un numero positivo mayor que cero" << std::endl;
         return;
     }
 
-    if (costo > 1000000) {
-        std::cerr << "Error: El costo es demasiado alto (máximo 1,000,000)" << std::endl;
+    if (costo > 1000) {
+        std::cerr << "Error: El costo es demasiado alto (maximo 1,000)" << std::endl;
+        return;
+    }
+
+    if (enrutadores.size() > 0 && costo > std::numeric_limits<int>::max() / enrutadores.size()) {
+        std::cerr << "Error: Costo demasiado alto para el tamaño de la red" << std::endl;
         return;
     }
 
@@ -128,7 +133,7 @@ void RedDirigida::agregarConexionDirigida(const std::string& origen, const std::
 
     for (const auto& conexion : conexiones) {
         if (conexion->obtenerOrigen() == origen && conexion->obtenerDestino() == destino) {
-            std::cerr << "Error: Ya existe una conexión de " << origen << " a " << destino << std::endl;
+            std::cerr << "Error: Ya existe una conexion de " << origen << " a " << destino << std::endl;
             return;
         }
     }
@@ -137,26 +142,15 @@ void RedDirigida::agregarConexionDirigida(const std::string& origen, const std::
         conexiones.push_back(new ConexionDirigida(origen, destino, costo));
         enrutadores[origen]->agregarVecinoSaliente(destino, costo);
         ejecutarAlgoritmoRutas();
-        std::cout << "Conexión dirigida agregada: " << origen << " -> " << destino << " (costo: " << costo << ")" << std::endl;
+        std::cout << "Conexion dirigida agregada: " << origen << " -> " << destino << " (costo: " << costo << ")" << std::endl;
     } catch (const std::bad_alloc& e) {
-        std::cerr << "Error crítico: Memoria insuficiente para crear conexión" << std::endl;
+        std::cerr << "Error critico: Memoria insuficiente para crear conexion" << std::endl;
     }
-}
-
-void RedDirigida::agregarConexionBidireccional(const std::string& nodo1, const std::string& nodo2, int costo1, int costo2) {
-    if (nodo1 == nodo2) {
-        std::cerr << "Error: No se puede crear conexión bidireccional con el mismo nodo" << std::endl;
-        return;
-    }
-
-    std::cout << "Agregando conexión bidireccional entre " << nodo1 << " y " << nodo2 << std::endl;
-    agregarConexionDirigida(nodo1, nodo2, costo1);
-    agregarConexionDirigida(nodo2, nodo1, costo2);
 }
 
 void RedDirigida::eliminarConexion(const std::string& origen, const std::string& destino) {
     if (origen == destino) {
-        std::cerr << "Error: Parámetros inválidos para eliminar conexión" << std::endl;
+        std::cerr << "Error: Parametros invalidos para eliminar conexion" << std::endl;
         return;
     }
 
@@ -187,9 +181,9 @@ void RedDirigida::eliminarConexion(const std::string& origen, const std::string&
     if (conexionEncontrada) {
         enrutadores[origen]->eliminarVecinoSaliente(destino);
         ejecutarAlgoritmoRutas();
-        std::cout << "Conexión eliminada: " << origen << " -> " << destino << std::endl;
+        std::cout << "Conexion eliminada: " << origen << " -> " << destino << std::endl;
     } else {
-        std::cerr << "Error: No existe la conexión de " << origen << " a " << destino << std::endl;
+        std::cerr << "Error: No existe la conexion de " << origen << " a " << destino << std::endl;
     }
 }
 
@@ -206,8 +200,9 @@ void RedDirigida::dijkstra(const std::string& origen) {
         std::map<std::string, std::vector<std::string>> caminos;
         std::map<std::string, bool> visitado;
 
+        int valorInfinitoSeguro = std::numeric_limits<int>::max() / 2;
         for (const auto& par : enrutadores) {
-            distancias[par.first] = std::numeric_limits<int>::max();
+            distancias[par.first] = valorInfinitoSeguro;
             visitado[par.first] = false;
         }
 
@@ -218,7 +213,12 @@ void RedDirigida::dijkstra(const std::string& origen) {
         std::priority_queue<ParDistanciaNodo, std::vector<ParDistanciaNodo>, std::greater<ParDistanciaNodo>> cola;
         cola.push({0, origen});
 
-        while (!cola.empty()) {
+        const size_t MAX_ITERACIONES = enrutadores.size() * enrutadores.size() + 100;
+        size_t iteraciones = 0;
+
+        while (!cola.empty() && iteraciones < MAX_ITERACIONES) {
+            iteraciones++;
+
             std::string actual = cola.top().second;
             cola.pop();
 
@@ -226,7 +226,7 @@ void RedDirigida::dijkstra(const std::string& origen) {
             visitado[actual] = true;
 
             if (!existeEnrutador(actual)) {
-                std::cerr << "Advertencia: Enrutador '" << actual << "' eliminado durante cálculo de rutas" << std::endl;
+                std::cerr << "Advertencia: Enrutador '" << actual << "' eliminado durante calculo de rutas" << std::endl;
                 continue;
             }
 
@@ -236,11 +236,17 @@ void RedDirigida::dijkstra(const std::string& origen) {
                 int costoEnlace = vecino.second;
 
                 if (!existeEnrutador(nombreVecino)) {
-                    std::cerr << "Advertencia: Vecino '" << nombreVecino << "' eliminado durante cálculo de rutas" << std::endl;
+                    std::cerr << "Advertencia: Vecino '" << nombreVecino << "' eliminado durante calculo de rutas" << std::endl;
                     continue;
                 }
 
                 if (!visitado[nombreVecino]) {
+                    if (distancias[actual] > valorInfinitoSeguro - costoEnlace) {
+                        std::cerr << "Advertencia: Overflow potencial detectado en ruta de "
+                                  << origen << " a " << nombreVecino << std::endl;
+                        continue;
+                    }
+
                     int nuevaDistancia = distancias[actual] + costoEnlace;
 
                     if (nuevaDistancia < distancias[nombreVecino]) {
@@ -253,18 +259,31 @@ void RedDirigida::dijkstra(const std::string& origen) {
             }
         }
 
+        if (iteraciones >= MAX_ITERACIONES) {
+            std::cerr << "Error: Dijkstra excedio el limite maximo de iteraciones ("
+                      << MAX_ITERACIONES << ") para " << origen
+                      << ". Verifique la topologia en busca de ciclos." << std::endl;
+            return;
+        }
+
         for (const auto& par : distancias) {
-            if (par.second != std::numeric_limits<int>::max() && existeEnrutador(par.first)) {
+            if (par.second < valorInfinitoSeguro && existeEnrutador(par.first)) {
                 enrutadores[origen]->actualizarTablaCostos(par.first, par.second);
                 enrutadores[origen]->actualizarTablaCaminos(par.first, caminos[par.first]);
             }
         }
+
     } catch (const std::exception& e) {
-        std::cerr << "Error crítico en Dijkstra: " << e.what() << std::endl;
+        std::cerr << "Error critico en Dijkstra: " << e.what() << std::endl;
     }
 }
 
 void RedDirigida::ejecutarAlgoritmoRutas() {
+    if (enrutadores.size() > 100) {
+        std::cout << "Advertencia: Red muy grande (" << enrutadores.size()
+        << " enrutadores). El calculo de rutas puede demorar." << std::endl;
+    }
+
     for (const auto& par : enrutadores) {
         dijkstra(par.first);
     }
@@ -361,7 +380,6 @@ void RedDirigida::mostrarTopologia() const {
 }
 
 void RedDirigida::actualizarCostoConexion(const std::string& origen, const std::string& destino, int nuevoCosto) {
-    // Validaciones
     if (origen == destino) {
         std::cout << "Error: No se puede actualizar conexion de un enrutador a si mismo" << std::endl;
         return;
@@ -399,14 +417,14 @@ void RedDirigida::actualizarCostoConexion(const std::string& origen, const std::
 
 void RedDirigida::cargarDesdeArchivo(const std::string& nombreArchivo) {
     if (nombreArchivo.empty()) {
-        std::cerr << "Error: El nombre del archivo no puede estar vacío" << std::endl;
+        std::cerr << "Error: El nombre del archivo no puede estar vacio" << std::endl;
         return;
     }
 
     std::ifstream archivo(nombreArchivo);
     if (!archivo.is_open()) {
         std::cerr << "Error: No se pudo abrir el archivo '" << nombreArchivo << "'" << std::endl;
-        std::cerr << "Verifique que el archivo existe y tiene permisos de lectura" << std::endl;
+        std::cerr << "Verifique que el archivo existe" << std::endl;
         return;
     }
 
@@ -430,13 +448,13 @@ void RedDirigida::cargarDesdeArchivo(const std::string& nombreArchivo) {
 
         if (ss >> origen >> destino >> costo) {
             if (origen.empty() || destino.empty()) {
-                std::cerr << "Error línea " << numeroLinea << ": Nombres vacíos" << std::endl;
+                std::cerr << "Error linea " << numeroLinea << ": Nombres vacios" << std::endl;
                 errores++;
                 continue;
             }
 
             if (costo <= 0) {
-                std::cerr << "Error línea " << numeroLinea << ": Costo debe ser positivo" << std::endl;
+                std::cerr << "Error linea " << numeroLinea << ": Costo debe ser positivo" << std::endl;
                 errores++;
                 continue;
             }
@@ -450,7 +468,7 @@ void RedDirigida::cargarDesdeArchivo(const std::string& nombreArchivo) {
             agregarConexionDirigida(origen, destino, costo);
             conexionesCargadas++;
         } else {
-            std::cerr << "Error línea " << numeroLinea << ": Formato inválido. Se espera: origen destino costo" << std::endl;
+            std::cerr << "Error linea " << numeroLinea << ": Formato invalido. Se espera: origen destino costo" << std::endl;
             errores++;
         }
     }
@@ -458,7 +476,7 @@ void RedDirigida::cargarDesdeArchivo(const std::string& nombreArchivo) {
     archivo.close();
 
     if (enrutadores.empty()) {
-        std::cerr << "Advertencia: El archivo no contenía datos válidos o estaba vacío" << std::endl;
+        std::cerr << "Advertencia: El archivo no contenia datos validos o estaba vacio" << std::endl;
         return;
     }
 
@@ -470,7 +488,7 @@ void RedDirigida::cargarDesdeArchivo(const std::string& nombreArchivo) {
         std::cout << "Advertencia: Se encontraron " << errores << " errores en el archivo" << std::endl;
     }
 
-    std::cout << "\nTopología cargada:" << std::endl;
+    std::cout << "\nTopologia cargada:" << std::endl;
     for (const auto& conexion : conexiones) {
         std::cout << "  " << conexion->obtenerOrigen() << " -> "
                   << conexion->obtenerDestino() << " (costo: "
@@ -480,7 +498,7 @@ void RedDirigida::cargarDesdeArchivo(const std::string& nombreArchivo) {
 
 void RedDirigida::generarRedAleatoria(int numEnrutadores, double probabilidadConexion, int costoMaximo) {
     if (numEnrutadores < 2 || numEnrutadores > 100) {
-        std::cerr << "Error: Número de enrutadores debe estar entre 2 y 100" << std::endl;
+        std::cerr << "Error: Numero de enrutadores debe estar entre 2 y 100" << std::endl;
         return;
     }
 
@@ -490,8 +508,20 @@ void RedDirigida::generarRedAleatoria(int numEnrutadores, double probabilidadCon
     }
 
     if (costoMaximo < 1 || costoMaximo > 1000) {
-        std::cerr << "Error: Costo máximo debe estar entre 1 y 1000" << std::endl;
+        std::cerr << "Error: Costo maximo debe estar entre 1 y 1000" << std::endl;
         return;
+    }
+
+    if (numEnrutadores > 50 && costoMaximo > 100) {
+        std::cout << "Advertencia: Reduciendo costo maximo a 100 para red grande de "
+                  << numEnrutadores << " enrutadores" << std::endl;
+        costoMaximo = 100;
+    }
+
+    if (numEnrutadores > 80 && costoMaximo > 50) {
+        std::cout << "Advertencia: Reduciendo costo maximo a 50 para red muy grande de "
+                  << numEnrutadores << " enrutadores" << std::endl;
+        costoMaximo = 50;
     }
 
     try {
@@ -514,37 +544,58 @@ void RedDirigida::generarRedAleatoria(int numEnrutadores, double probabilidadCon
 
         std::cout << "Generando conexiones (probabilidad: " << (probabilidadConexion * 100) << "%)..." << std::endl;
 
+        const int MAX_CONEXIONES = numEnrutadores * 10;
+        bool advertenciaConexiones = false;
+
         for (size_t i = 0; i < nombres.size(); ++i) {
             for (size_t j = 0; j < nombres.size(); ++j) {
                 if (i != j && disProb(gen) < probabilidadConexion) {
+                    if (conexionesCreadas >= MAX_CONEXIONES) {
+                        if (!advertenciaConexiones) {
+                            std::cout << "Advertencia: Limite de conexiones alcanzado ("
+                                      << MAX_CONEXIONES << "). Deteniendo generacion." << std::endl;
+                            advertenciaConexiones = true;
+                        }
+                        break;
+                    }
+
                     int costo = disCosto(gen);
                     agregarConexionDirigida(nombres[i], nombres[j], costo);
                     conexionesCreadas++;
                 }
             }
+            if (advertenciaConexiones) break;
         }
 
         double densidad = (conexionesCreadas * 100.0) / conexionesPosibles;
 
-        std::cout << "\n Red aleatoria generada exitosamente:" << std::endl;
+        std::cout << "\nRed aleatoria generada exitosamente:" << std::endl;
         std::cout << "   Enrutadores creados: " << numEnrutadores << std::endl;
         std::cout << "   Conexiones creadas: " << conexionesCreadas << std::endl;
         std::cout << "   Densidad de red: " << densidad << "%" << std::endl;
-        std::cout << "   Costo máximo configurado: " << costoMaximo << std::endl;
+        std::cout << "   Costo maximo utilizado: " << costoMaximo << std::endl;
 
         if (densidad < 10.0) {
             std::cout << "   Advertencia: La red tiene baja conectividad" << std::endl;
         }
 
+        if (costoMaximo > 500) {
+            std::cout << "   Advertencia: Costos altos detectados, verifique el rendimiento" << std::endl;
+        }
+
+        if (numEnrutadores > 30) {
+            std::cout << "   Advertencia: Red grande, los calculos pueden tomar mas tiempo" << std::endl;
+        }
+
     } catch (const std::exception& e) {
-        std::cerr << "Error crítico generando red aleatoria: " << e.what() << std::endl;
+        std::cerr << "Error critico generando red aleatoria: " << e.what() << std::endl;
         limpiarRed();
     }
 }
 
 void RedDirigida::mostrarFormatoArchivo() const {
     std::cout << "\n=== FORMATO ESPERADO DEL ARCHIVO ===" << std::endl;
-    std::cout << "Cada línea debe contener: ORIGEN DESTINO COSTO" << std::endl;
+    std::cout << "Cada linea debe contener: ORIGEN DESTINO COSTO" << std::endl;
     std::cout << "Ejemplo:" << std::endl;
     std::cout << "A B 5" << std::endl;
     std::cout << "A C 3" << std::endl;

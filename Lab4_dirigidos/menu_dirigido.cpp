@@ -1,6 +1,7 @@
 #include "menu_dirigido.h"
 #include <iostream>
 #include <stdexcept>
+#include <cctype>
 #include <limits>
 
 
@@ -15,16 +16,15 @@ void MenuDirigido::mostrarMenuPrincipal() {
         std::cout << "    SISTEMA DE RED CONEXIONES DIRIGIDAS" << std::endl;
         std::cout << "=========================================" << std::endl;
         std::cout << "1. Gestionar Enrutadores" << std::endl;
-        std::cout << "2. Agregar Conexion Dirigida" << std::endl;
-        std::cout << "3. Agregar Conexion Bidireccional" << std::endl;
-        std::cout << "4. Eliminar Conexion" << std::endl;
-        std::cout << "5. Actualizar Costo de Conexion" << std::endl;
-        std::cout << "6. Mostrar Tablas de Enrutamiento" << std::endl;
-        std::cout << "7. Mostrar Topologia Completa" << std::endl;
-        std::cout << "8. Cargar Red desde Archivo" << std::endl;
-        std::cout << "9. Generar Red Aleatoria" << std::endl;
-        std::cout << "10. Encontrar Camino Mas Corto" << std::endl;
-        std::cout << "11. Mostrar Formato de Archivo" << std::endl;
+        std::cout << "2. Agregar Conexion" << std::endl;
+        std::cout << "3. Eliminar Conexion" << std::endl;
+        std::cout << "4. Actualizar Costo de Conexion" << std::endl;
+        std::cout << "5. Mostrar Tablas de Enrutamiento" << std::endl;
+        std::cout << "6. Mostrar Topologia Completa" << std::endl;
+        std::cout << "7. Cargar Red desde Archivo" << std::endl;
+        std::cout << "8. Generar Red Aleatoria" << std::endl;
+        std::cout << "9. Encontrar Camino Mas Corto" << std::endl;
+        std::cout << "10. Mostrar Formato de Archivo" << std::endl;
         std::cout << "0. Salir" << std::endl;
         std::cout << "-----------------------------------------" << std::endl;
         std::cout << "Seleccione una opcion: ";
@@ -50,38 +50,25 @@ void MenuDirigido::mostrarMenuPrincipal() {
         case 2: gestionarConexiones(); break;
         case 3:
         {
-            std::string nodo1, nodo2;
-            int costo1, costo2;
-            std::cout << "\n=== AGREGAR CONEXION BIDIRECCIONAL ===" << std::endl;
-            std::cout << "Nodo 1: "; std::cin >> nodo1;
-            std::cout << "Nodo 2: "; std::cin >> nodo2;
-            std::cout << "Costo de " << nodo1 << " a " << nodo2 << ": "; std::cin >> costo1;
-            std::cout << "Costo de " << nodo2 << " a " << nodo1 << ": "; std::cin >> costo2;
-            red->agregarConexionBidireccional(nodo1, nodo2, costo1, costo2);
-        }
-        break;
-        case 4:
-        {
             std::string origen, destino;
             std::cout << "\n=== ELIMINAR CONEXION ===" << std::endl;
             std::cout << "Origen: "; std::cin >> origen;
             std::cout << "Destino: "; std::cin >> destino;
             red->eliminarConexion(origen, destino);
-            std::cout << "Conexion eliminada." << std::endl;
         }
         break;
-        case 5: actualizarCostoConexion(); break;
-        case 6: mostrarInformacion(); break;
-        case 7: mostrarTopologia(); break;
-        case 8: cargarRedDesdeArchivo(); break;
-        case 9: generarRedAleatoria(); break;
-        case 10: encontrarCaminoMasCorto(); break;
-        case 11: red->mostrarFormatoArchivo(); break;
+        case 4: actualizarCostoConexion(); break;
+        case 5: mostrarInformacion(); break;
+        case 6: mostrarTopologia(); break;
+        case 7: cargarRedDesdeArchivo(); break;
+        case 8: generarRedAleatoria(); break;
+        case 9: encontrarCaminoMasCorto(); break;
+        case 10: red->mostrarFormatoArchivo(); break;
         case 0:
-            std::cout << "Saliendo del sistema..." << std::endl;
+            std::cout << "Saliendo del sistema" << std::endl;
             break;
         default:
-            std::cout << "Error: Opcion invalida! Por favor seleccione 0-11." << std::endl;
+            std::cout << "Error: Opcion invalida. Por favor seleccione 0-10." << std::endl;
             std::cin.clear();
         }
     } while(opcion != 0);
@@ -91,7 +78,7 @@ void MenuDirigido::gestionarEnrutadores() {
     int opcion;
     std::string nombre;
 
-    std::cout << "\n=== GESTIÓN DE ENRUTADORES ===" << std::endl;
+    std::cout << "\n=== GESTION DE ENRUTADORES ===" << std::endl;
     std::cout << "1. Agregar Enrutador" << std::endl;
     std::cout << "2. Eliminar Enrutador" << std::endl;
     std::cout << "3. Listar Enrutadores" << std::endl;
@@ -100,7 +87,7 @@ void MenuDirigido::gestionarEnrutadores() {
     if (!(std::cin >> opcion)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cerr << "Error: Entrada inválida" << std::endl;
+        std::cerr << "Error: Entrada invalida" << std::endl;
         return;
     }
 
@@ -109,7 +96,7 @@ void MenuDirigido::gestionarEnrutadores() {
         if (!(std::cin >> nombre)) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cerr << "Error: Nombre inválido" << std::endl;
+            std::cerr << "Error: Nombre invalido" << std::endl;
             return;
         }
     }
@@ -135,7 +122,7 @@ void MenuDirigido::gestionarEnrutadores() {
     }
     break;
     default:
-        std::cerr << "Error: Opción inválida!" << std::endl;
+        std::cerr << "Error: Opcion invalida" << std::endl;
     }
 }
 
@@ -144,9 +131,43 @@ void MenuDirigido::gestionarConexiones() {
     int costo;
 
     std::cout << "\n=== AGREGAR CONEXION DIRIGIDA ===" << std::endl;
-    std::cout << "Origen: "; std::cin >> origen;
-    std::cout << "Destino: "; std::cin >> destino;
-    std::cout << "Costo: "; std::cin >> costo;
+    std::cout << "Origen: ";
+    std::cin >> origen;
+    std::cout << "Destino: ";
+    std::cin >> destino;
+    std::cout << "Costo: ";
+
+    std::string entradaCosto;
+    std::cin >> entradaCosto;
+
+    bool esNumeroValido = true;
+    for (char c : entradaCosto) {
+        if (!std::isdigit(c)) {
+            esNumeroValido = false;
+            break;
+        }
+    }
+
+    if (!esNumeroValido) {
+        std::cerr << "Error: El costo debe ser un numero entero positivo" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return;
+    }
+
+    try {
+        costo = std::stoi(entradaCosto);
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Error: El costo es demasiado grande (maximo: " << std::numeric_limits<int>::max() << ")" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Error: Entrada invalida para el costo" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return;
+    }
 
     red->agregarConexionDirigida(origen, destino, costo);
 }
@@ -166,12 +187,12 @@ void MenuDirigido::mostrarTopologia() {
 
 void MenuDirigido::encontrarCaminoMasCorto() {
     std::string origen, destino;
-    std::cout << "\n=== ENCONTRAR CAMINO MÁS CORTO ===" << std::endl;
+    std::cout << "\n=== ENCONTRAR CAMINO MAS CORTO ===" << std::endl;
     std::cout << "Origen: ";
     if (!(std::cin >> origen)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cerr << "Error: Entrada inválida para origen" << std::endl;
+        std::cerr << "Error: Entrada invalida para origen" << std::endl;
         return;
     }
 
@@ -179,7 +200,7 @@ void MenuDirigido::encontrarCaminoMasCorto() {
     if (!(std::cin >> destino)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cerr << "Error: Entrada inválida para destino" << std::endl;
+        std::cerr << "Error: Entrada invalida para destino" << std::endl;
         return;
     }
 
@@ -200,15 +221,15 @@ void MenuDirigido::generarRedAleatoria() {
 
     std::cout << "\n=== GENERAR RED ALEATORIA ===" << std::endl;
 
-    std::cout << "Número de enrutadores (2-100): ";
+    std::cout << "Numero de enrutadores (2-100): ";
     if (!(std::cin >> numEnrutadores) || numEnrutadores < 2 || numEnrutadores > 100) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cerr << "Error: El número de enrutadores debe estar entre 2 y 100" << std::endl;
+        std::cerr << "Error: El numero de enrutadores debe estar entre 2 y 100" << std::endl;
         return;
     }
 
-    std::cout << "Probabilidad de conexión (0.1-1.0): ";
+    std::cout << "Probabilidad de conexion (0.1-1.0): ";
     if (!(std::cin >> probabilidad) || probabilidad < 0.1 || probabilidad > 1.0) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -216,11 +237,11 @@ void MenuDirigido::generarRedAleatoria() {
         return;
     }
 
-    std::cout << "Costo máximo (1-1000): ";
+    std::cout << "Costo maximo (1-1000): ";
     if (!(std::cin >> costoMaximo) || costoMaximo < 1 || costoMaximo > 1000) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cerr << "Error: El costo máximo debe estar entre 1 y 1000" << std::endl;
+        std::cerr << "Error: El costo maximo debe estar entre 1 y 1000" << std::endl;
         return;
     }
 
@@ -229,12 +250,28 @@ void MenuDirigido::generarRedAleatoria() {
 
 void MenuDirigido::actualizarCostoConexion() {
     std::string origen, destino;
+    std::string entradaCosto;
     int nuevoCosto;
 
     std::cout << "\n=== ACTUALIZAR COSTO DE CONEXION ===" << std::endl;
     std::cout << "Origen: "; std::cin >> origen;
     std::cout << "Destino: "; std::cin >> destino;
-    std::cout << "Nuevo costo: "; std::cin >> nuevoCosto;
+    std::cout << "Nuevo costo: ";
+    std::cin >> entradaCosto;
+
+    try {
+        nuevoCosto = std::stoi(entradaCosto);
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Error: El costo es demasiado grande (maximo: " << std::numeric_limits<int>::max() << ")" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Error: El costo debe ser un numero entero valido" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return;
+    }
 
     red->actualizarCostoConexion(origen, destino, nuevoCosto);
 }
